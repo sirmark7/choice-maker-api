@@ -19,7 +19,6 @@ import { CategoryService } from './category/category.service';
 import { AuthService } from './auth/auth.service';
 import { VoteService } from './vote/vote.service';
 
-
 @Module({
   imports: [
     // ConfigModule.forRoot({ isGlobal: true }),

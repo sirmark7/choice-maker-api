@@ -11,7 +11,7 @@ export class CreateVoteDto {
     description: 'candidates votes count ',
   })
   votes: number;
-  
+
   @IsNotEmpty()
   @ApiProperty({
     name: 'Candidate user ID',

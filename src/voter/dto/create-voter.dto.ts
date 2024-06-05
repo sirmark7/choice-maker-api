@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 export class CreateVoterDto {
   id: number;
@@ -10,21 +10,20 @@ export class CreateVoterDto {
     required: true,
     example: 'john doe',
     description: 'Voters full name ',
-    })
+  })
   name: string;
 
-    @IsEmail()
-     @ApiProperty({
-        name:'Email',
+  @ApiProperty({
+    name: 'Voter ID',
     type: String,
-    required: false,
-    example: 'GRE-272272@gmail.com7',
-    description: 'voters email address',
-    })
-    email?: string;
+    required: true,
+    example: 'GRE-272272@',
+    description: 'voters voterid',
+  })
+  voterId: string;
 
-     @ApiProperty({
-        name:'Password',
+  @ApiProperty({
+    name: 'Password',
     type: String,
     required: true,
     example: 'GRE-2722727',

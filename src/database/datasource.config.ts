@@ -15,4 +15,3 @@ export default new DataSource({
   synchronize: true,
   // migrations: [Dbmigration1692800072246, SeedSuperAdmin1692800072248],
 });
-
