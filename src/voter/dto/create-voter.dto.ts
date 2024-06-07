@@ -40,6 +40,12 @@ export class CreateVoterDto {
   })
   picture?: string;
 
+  verified: boolean;
+
+  pwd_expired_at: Date;
+
+  pwd_code: number;
+
   created_at: Date;
   updated_at?: Date;
   deleted_at?: Date;

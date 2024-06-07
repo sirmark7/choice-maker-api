@@ -1,26 +1,106 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { CreateVoterDto } from './dto/create-voter.dto';
 import { UpdateVoterDto } from './dto/update-voter.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Voter } from './entities/voter.entity';
+import { Repository } from 'typeorm';
+import { hash } from 'bcrypt';
 
 @Injectable()
 export class VoterService {
-  create(createVoterDto: CreateVoterDto) {
-    return 'This action adds a new voter';
+  constructor(
+    @InjectRepository(Voter) private voterRepository: Repository<Voter>,
+  ) {}
+
+  async create(createVoterDto: CreateVoterDto) {
+    try {
+      const voterExists = await this.findOneByVoterId(createVoterDto.voterId);
+      if (voterExists) {
+        throw new ConflictException('Admin Exists');
+      }
+      if (!createVoterDto.password || !createVoterDto.voterId) {
+        throw new RequestTimeoutException('Password is required');
+      }
+
+
+      if (createVoterDto.password) {
+        const hashedPassword = await hash(createVoterDto.password, 10);
+        createVoterDto.password = hashedPassword;
+        createVoterDto.verified = true;
+      }
+
+      const formatUser = this.voterRepository.create(createVoterDto);
+      const result = await this.voterRepository.save(formatUser);
+
+      return result;
+    } catch (error) {
+      return error;
+    }
   }
 
-  findAll() {
-    return `This action returns all voter`;
+  async findAll() {
+    try {
+      const result = await this.voterRepository.find();
+      return result;
+    } catch (error) {
+      return error;
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} voter`;
+  async findOne(id: number) {
+    try {
+      const result = await this.voterRepository.findOne({ where: { id } });
+      return result;
+    } catch (error) {
+      return error;
+    }
+  }
+  async findOneByVoterId(voterId: string) {
+    try {
+      const result = await this.voterRepository.findOne({
+        where: { voter_id: voterId },
+      });
+      return result;
+    } catch (error) {
+      return error;
+    }
   }
 
-  update(id: number, updateVoterDto: UpdateVoterDto) {
-    return `This action updates a #${id} voter`;
+  async update(id: number, updateVoterDto: UpdateVoterDto) {
+    try {
+      const voterExists = await this.findOne(id);
+      if (!voterExists.id) {
+        throw new NotFoundException('Voter does not Exists');
+      }
+
+      const updatedAdmin = this.voterRepository.merge(
+        voterExists,
+        updateVoterDto,
+      );
+      const result = await this.voterRepository.save(updatedAdmin);
+
+      return result;
+    } catch (error) {
+      return error;
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} voter`;
+  async remove(id: number) {
+    try {
+      const voterExists = await this.findOne(id);
+      if (!voterExists.id) {
+        throw new NotFoundException('Admin does not Exists');
+      }
+      const result = await this.voterRepository.remove(voterExists);
+
+      return result;
+    } catch (error) {
+      return error;
+    }
   }
 }

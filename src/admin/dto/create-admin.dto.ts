@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 export class CreateAdminDto {
   id: number;
@@ -39,7 +39,7 @@ export class CreateAdminDto {
     description: 'voters profile picture ',
   })
   picture?: string;
-
+  verified: boolean;
   created_at: Date;
   updated_at?: Date;
   deleted_at?: Date;

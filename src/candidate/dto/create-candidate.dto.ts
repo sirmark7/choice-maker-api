@@ -21,7 +21,17 @@ export class CreateCandidateDto {
     description: 'position candidate is contesting for ',
   })
   @IsNotEmpty()
-  positionId: number;
+  categoryId: number;
+
+  @ApiProperty({
+    name: 'votes',
+    type: Number,
+    required: true,
+    example: 234,
+    description: 'candidate votes',
+  })
+  votes: number;
+
   created_at: Date;
   updated_at?: Date;
   deleted_at?: Date;
