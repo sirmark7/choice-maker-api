@@ -27,7 +27,6 @@ export class VoterService {
         throw new RequestTimeoutException('Password is required');
       }
 
-
       if (createVoterDto.password) {
         const hashedPassword = await hash(createVoterDto.password, 10);
         createVoterDto.password = hashedPassword;
