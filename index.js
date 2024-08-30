@@ -17,12 +17,17 @@ import positionRoutes from './routes/electionRoutes.js'
 import candidateRoutes from './routes/positionRoutes.js'
 import voteRoutes from './routes/votesRoutes.js'
 import electionRoutes from './routes/electionRoutes.js'
+import { authMiddleware,adminMiddleware } from './middlewares/authMiddleware.js';
+import upload from './middlewares/uploadMiddleware.js';
 
+app.use(authMiddleware);
+app.use(upload.single('image'));
 app.use('/api/users', userRoutes);
+app.use('/api/votes', voteRoutes);
+app.use(adminMiddleware)
 app.use('/api/categories', categoryRoutes);
 app.use('/api/positions', positionRoutes);
 app.use('/api/candidates', candidateRoutes);
-app.use('/api/votes', voteRoutes);
 app.use('/api/elections', electionRoutes);
 
 app.use("*",(req,res)=>{
