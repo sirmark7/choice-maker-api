@@ -4,10 +4,11 @@ import bcrypt from 'bcrypt';
 // Create a new user
 export const createUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, personalId, password, role, } = req.body;
+    const {logo}=req.files
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await User.create({ name, email, password: hashedPassword, role });
+    const newUser = await User.create({ name, personalId, password: hashedPassword, role,logo });
     res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ error: 'Error creating user' });

@@ -11,15 +11,17 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-import userRoutes from './routes/userRoutes.js'
-import categoryRoutes from './routes/categoryRoutes.js'
-import positionRoutes from './routes/electionRoutes.js'
-import candidateRoutes from './routes/positionRoutes.js'
+import userRoutes from './routes/userRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
+import positionRoutes from './routes/positionRoutes.js'
 import voteRoutes from './routes/votesRoutes.js'
+import candidateRoutes from './routes/candidateRoutes.js';
 import electionRoutes from './routes/electionRoutes.js'
+import authRoutes from './routes/authRoutes.js'
 import { authMiddleware,adminMiddleware } from './middlewares/authMiddleware.js';
 import upload from './middlewares/uploadMiddleware.js';
 
+app.use('/api/auth',authRoutes)
 app.use(authMiddleware);
 app.use(upload.single('image'));
 app.use('/api/users', userRoutes);

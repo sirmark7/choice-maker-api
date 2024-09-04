@@ -1,8 +1,10 @@
-import { object } from 'joi'
+import Pkg from 'joi'
 
-const Shema= object({
-    userId:string().min(4).required(),
-    password:string().min(8).require()
+
+const Shema= Pkg.object({
+    personalId:Pkg.string().min(6).required(),
+    password:Pkg.string().min(8).required(),
+    name:Pkg.string().required()
 })
 
 export default Shema
