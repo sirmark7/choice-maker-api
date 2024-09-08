@@ -9,6 +9,7 @@ const app= express();
 app.use(cors());
 // Middleware
 app.use(express.json());
+app.use(express.urlencoded({extended:true}))
 
 // Routes
 import userRoutes from './routes/userRoutes.js';
@@ -24,12 +25,12 @@ import upload from './middlewares/uploadMiddleware.js';
 app.use('/api/auth',authRoutes)
 app.use(authMiddleware);
 app.use(upload.single('image'));
-app.use('/api/users', userRoutes);
 app.use('/api/votes', voteRoutes);
+app.use('/api/candidates', candidateRoutes);
 app.use(adminMiddleware)
+app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/positions', positionRoutes);
-app.use('/api/candidates', candidateRoutes);
 app.use('/api/elections', electionRoutes);
 
 app.use("*",(req,res)=>{

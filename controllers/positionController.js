@@ -1,5 +1,5 @@
-import Position from '../model/positionModel.js';
-import Category from '../model/categoryModel.js';
+
+import { Position,Category } from '../model/index.js';
 // Create a new position
 export const createPosition = async (req, res) => {
   try {
@@ -71,7 +71,7 @@ export const deletePosition = async (req, res) => {
     if (!position) return res.status(404).json({ error: 'Position not found' });
 
     await position.destroy();
-    res.status(200).json({ message: 'Position deleted successfully' });
+    res.status(200).json({ message: 'Position deleted successfully', data:position});
   } catch (error) {
     res.status(500).json({ error: 'Error deleting position' });
   }

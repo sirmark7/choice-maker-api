@@ -1,7 +1,5 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../db/dbConfig.js';
-import User from './userModel.js';
-import Candidate from './candidateModel.js';
 
 const Vote = sequelize.define('Vote', {
   id: {
@@ -11,17 +9,11 @@ const Vote = sequelize.define('Vote', {
   },
   userId: {
     type: DataTypes.UUID,
-    references: {
-      model: User,
-      key: 'id',
-    },
+     allowNull:false
   },
   candidateId: {
     type: DataTypes.UUID,
-    references: {
-      model: Candidate,
-      key: 'id',
-    },
+    allowNull:false
   },
 }, {
   timestamps: true,
@@ -32,8 +24,5 @@ const Vote = sequelize.define('Vote', {
     },
   },
 });
-
-Vote.belongsTo(User, { foreignKey: 'userId', as: 'student' });
-Vote.belongsTo(Candidate, { foreignKey: 'candidateId', as: 'candidate' });
 
 export default Vote;

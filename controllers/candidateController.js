@@ -1,7 +1,4 @@
-import Candidate from '../model/candidateModel.js';
-import Position from '../model/positionModel.js';
-import Category from '../model/categoryModel.js';
-import User from '../model/userModel.js';
+import {Candidate,Position,Category,User,Vote} from '../model/index.js';
 // Create a new candidate
 export const createCandidate = async (req, res) => {
   try {
@@ -13,9 +10,52 @@ export const createCandidate = async (req, res) => {
   }
 };
 
+export const getAllCandidatesWithVotes=async(req,res)=>{
+  try {
+    // Find all candidates, ordered by category, and count the votes for each
+    const candidates = await Candidate.findAll({
+      attributes: [
+        'id', 'manifesto', 'policies',
+        [Vote.sequelize.fn('COUNT', Vote.sequelize.col('votes.candidateId')), 'voteCount'] // Count votes
+      ],
+      include: [
+        {
+          model: Position,
+          as: 'position',
+          include: {
+            model: Category,
+            as: 'category',
+            attributes: ['name']  // Include the category name
+          }
+        },
+        {
+          model: Vote,
+          as: 'votes',
+          attributes: []  // Don't need vote details, just count
+        },
+        {
+          model: User,
+          as: 'student',
+          attributes: ['name']  // Include the student's name
+        }
+      ],
+      group: ['Candidate.id', 'position.id', 'position->category.id'],  // Group by candidate, position, and category
+      order: [
+        [{ model: Position, as: 'position' }, { model: Category, as: 'category' }, 'name', 'ASC'],  // Order by category name
+        [Vote.sequelize.literal('voteCount'), 'DESC']  // Order by vote count
+      ]
+    });
+
+    res.status(200).json({ message: 'success', data: candidates });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error fetching candidates' });
+  }
+}
+
 export const getCandidateByCategory=async (req, res) => {
   try {
-    const categoryId = req.params.categoryId;
+    // const categoryId = req.params.categoryId;
 
     // Find all candidates where the position's category matches the given category ID
     const candidates = await Candidate.findAll({

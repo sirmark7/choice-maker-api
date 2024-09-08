@@ -1,55 +1,56 @@
-import Election from '../model/electionModel.js';
-import Position from '../model/positionModel.js';
-import Category from '../model/categoryModel.js';
-import Vote from '../model/voteModel.js';
-import User from '../model/userModel.js';
-import Candidate from '../model/candidateModel.js';
 
-
+import { Election,Position,Category,Vote,User,Candidate } from '../model/index.js';
 
 // Get votes for each candidate in an election, sorted by their positions
+
 export const getElectionResults = async (req, res) => {
-  try {
-    const electionId = req.params.electionId;
+//  try {
+//     const electionId = req.params.electionId;
 
-    // Find the election with its associated positions and candidates
-    const election = await Election.findByPk(electionId, {
-      include: {
-        model: Position,
-        as: 'positions',
-        include: {
-          model: Candidate,
-          as: 'candidates',
-          attributes: {
-            include: [
-              [Vote.sequelize.fn('COUNT', Vote.sequelize.col('votes.id')), 'voteCount'] // Count the votes
-            ]
-          },
-          include: [
-            {
-              model: User,
-              as: 'student',
-              attributes: ['name'], // Include the user's name
-            }
-          ],
-          group: ['Candidate.id'], // Group by candidate ID
-        },
-      },
-      order: [
-        ['positions', 'name', 'ASC'],  // Order positions by name
-        [{ model: Position, as: 'positions' }, { model: Candidate, as: 'candidates' }, Vote.sequelize.literal('voteCount'), 'DESC']  // Order candidates by vote count within positions
-      ]
-    });
+//     // Find the election with its associated positions and candidates
+//     const election = await Election.findByPk(electionId, {
+//       include: {
+//         model: Position,
+//         as: 'positions',
+//         include: {
+//           model: Candidate,
+//           as: 'candidates',
+//           attributes: {
+//             include: [
+//               // Count votes for each candidate
+//               [Vote.sequelize.fn('COUNT', Vote.sequelize.col('candidateId')), 'voteCount']
+//             ]
+//           },
+//           include: [
+//             {
+//               model: User,
+//               as: 'student',
+//               attributes: ['name'], // Include the user's name
+//             },
+//             {
+//               model: Vote,
+//               as: 'votes',
+//               attributes: [] // No need to include vote details, just counting
+//             }
+//           ]
+//         }
+//       },
+//       group: ['votes.candidateId'], // Group by candidate ID to aggregate votes
+//       // order: [
+//       //   ['positions', 'name', 'ASC'],  // Order positions by name
+//       //   [{ model: Position, as: 'positions' }, { model: Candidate, as: 'candidates' }, 'DESC']  // Order candidates by vote count within positions
+//       // ]
+//     });
 
-    if (!election) {
-      return res.status(404).json({ message: 'Election not found' });
-    }
+//     if (!election) {
+//       return res.status(404).json({ message: 'Election not found' });
+//     }
 
-    res.status(200).json({message:'success',data:election});
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error fetching election results' });
-  }
+//     res.status(200).json({ message: 'success', data: election });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Error fetching election results' });
+//   }
 };
 
 
@@ -151,7 +152,7 @@ export const deleteElection = async (req, res) => {
     if (!election) return res.status(404).json({ error: 'Election not found' });
 
     await election.destroy();
-    res.status(200).json({ message: 'Election deleted successfully' });
+    res.status(200).json({ message: 'Election deleted successfully',data:election });
   } catch (error) {
     res.status(500).json({ error: 'Error deleting election' });
   }

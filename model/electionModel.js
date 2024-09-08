@@ -30,10 +30,7 @@ const Election = sequelize.define('Election', {
   paranoid: true,
 });
 
-import Position from './positionModel.js';
 
-// Define the many-to-many relationship using a join table
-Election.belongsToMany(Position, { through: 'ElectionPosition', as: 'positions' });
-Position.belongsToMany(Election, { through: 'ElectionPosition', as: 'elections' });
+
 
 export default Election;

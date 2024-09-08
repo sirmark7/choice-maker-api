@@ -139,6 +139,7 @@ module.exports = {
           key: 'id',
         },
         allowNull: false,
+        onDelete: 'CASCADE',
       },
       positionId: {
         type: DataTypes.UUID,
@@ -147,6 +148,7 @@ module.exports = {
           key: 'id',
         },
         allowNull: false,
+        onDelete: 'CASCADE',
       },
       createdAt: {
         type: DataTypes.DATE,
@@ -187,6 +189,7 @@ module.exports = {
           key: 'id',
         },
         allowNull: false,
+        onDelete: 'CASCADE',
       },
       createdAt: {
         type: DataTypes.DATE,

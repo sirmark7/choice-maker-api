@@ -1,4 +1,4 @@
-import User from '../model/userModel.js';
+import {User} from '../model/index.js';
 import jwt from 'jsonwebtoken'
 import * as bcrypt from 'bcrypt';
 import authValidator from '../middlewares/authValidator.js'
@@ -43,7 +43,7 @@ export const registerAdmin = async (req, res) => {
      if(error){
             throw new Error(error)
         }
-  const { name, personalId, password} = value;
+  const { name, personalId, password, role} = value;
     if(!name || !personalId || !password){
       throw new Error('All feilds are required')
     }
@@ -54,7 +54,7 @@ export const registerAdmin = async (req, res) => {
       name:name, 
       personalId:personalId,
       password: hashedPassword,
-      role:'admin'
+      role:role?role:'admin'
     });
  
     
@@ -70,30 +70,33 @@ export const loginUser=async(req,res)=>{
     try { 
         
         const {error,value}= authValidator.validate(req.body)
-    if(error){
         console.log(value);
+        
+    if(error){
+        console.log(error);
         res.status(200).json("Check your credentials")
+        return;
     }
 
 // console.log(values);
 
         const {password,personalId}=value
-        const result = await User.findOne({where:{personalId:personalId}})
-        const userExists =result.dataValues
-
+        const userExists = await User.findOne({where:{personalId:personalId}})
         console.log(userExists);
+        
         if(!userExists){
             res.status(400).json("user does not exist")
             return;
         }
-        console.log(password);
+          const user =userExists.dataValues
         
-        const isMatch = await bcrypt.compare(password, userExists?.password);
+        const isMatch = await bcrypt.compare(password, user?.password);
 
     if (!isMatch) return res.status(400).json({statusCode:400, message: 'Invalid credentials' });
 
-        const token =jwt.sign(userExists,process.env.JWT_SECRET.toString())
-        res.status(200).json({user:userExists, token:token})
+        const token =jwt.sign(user,process.env.JWT_SECRET.toString())
+        delete userExists.password
+        res.status(200).json({user, token:token})
  
     } catch (error) {
         console.log(error);    

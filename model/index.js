@@ -1,20 +1,28 @@
-// In your main file where you set up models
 import User from './userModel.js';
-import Candidate from './candidateModel.js';
 import Position from './positionModel.js';
+import Candidate from './candidateModel.js';
+import Election from './electionModel.js';
 import Category from './categoryModel.js';
 import Vote from './voteModel.js';
-import Election from './electionModel.js';
-
-// Associations
+// User Associations
 User.hasMany(Candidate, { as: 'candidates', foreignKey: 'userId' });
 User.hasMany(Vote, { as: 'votes', foreignKey: 'userId' });
 
-Candidate.belongsTo(User, { as: 'student', foreignKey: 'userId' });
-Candidate.belongsTo(Position, { as: 'position', foreignKey: 'positionId' });
+// Candidate Associations
+Candidate.hasMany(Vote, { as: 'votes', foreignKey: 'candidateId' });
+Candidate.belongsTo(User, { foreignKey: 'userId', as: 'student' });
+Candidate.belongsTo(Position, { foreignKey: 'positionId', as: 'position' });
 
-Position.belongsTo(Category, { as: 'category', foreignKey: 'categoryId' });
+// Position Associations
 Position.hasMany(Candidate, { as: 'candidates', foreignKey: 'positionId' });
+Position.belongsTo(Category, { foreignKey: 'categoryId', as: 'category' });
+Position.belongsToMany(Election, { through: 'ElectionPosition', as: 'elections' });
 
-Vote.belongsTo(User, { as: 'student', foreignKey: 'userId' });
-Vote.belongsTo(Candidate, { as: 'candidate', foreignKey: 'candidateId' });
+// Election Associations
+Election.belongsToMany(Position, { through: 'ElectionPosition', as: 'positions' });
+
+// Vote Associations
+Vote.belongsTo(Candidate, { foreignKey: 'candidateId', as: 'candidate' });
+Vote.belongsTo(User, { foreignKey: 'userId', as: 'student' });
+
+export {User,Candidate,Position,Category,Election,Vote}

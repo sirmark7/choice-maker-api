@@ -1,4 +1,4 @@
-import User from '../model/userModel.js';
+import {User} from '../model/index.js';
 import bcrypt from 'bcrypt';
 
 // Create a new user
@@ -9,7 +9,7 @@ export const createUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({ name, personalId, password: hashedPassword, role,logo });
-    res.status(201).json(newUser);
+    res.status(201).json({message:'success',data:newUser});
   } catch (error) {
     res.status(500).json({ error: 'Error creating user' });
   }
@@ -61,7 +61,7 @@ export const deleteUser = async (req, res) => {
     if (!user) return res.status(404).json({ error: 'User not found' });
 
     await user.destroy();
-    res.status(200).json({ message: 'User deleted successfully' });
+    res.status(200).json({ message: 'User deleted successfully',data:user });
   } catch (error) {
     res.status(500).json({ error: 'Error deleting user' });
   }

@@ -1,8 +1,11 @@
-import Vote from '../model/voteModel.js';
+import {Vote} from '../model/index.js';
 // Cast a vote
 export const castVote = async (req, res) => {
   try {
     const { userId, candidateId } = req.body;
+       // const {candidateId } = req.body;
+    // const userId =req.user.id
+    
     const existingVote = await Vote.findOne({ where: { userId, candidateId } });
 
     if (existingVote) {
@@ -10,7 +13,7 @@ export const castVote = async (req, res) => {
     }
 
     const newVote = await Vote.create({ userId, candidateId });
-    res.status(201).json(newVote);
+    res.status(201).json({message:'success',data:newVote});
   } catch (error) {
     res.status(500).json({ error: 'Error casting vote' });
   }

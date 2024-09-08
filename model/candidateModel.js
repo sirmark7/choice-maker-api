@@ -1,7 +1,5 @@
 import { DataTypes } from 'sequelize';
 import {sequelize} from '../db/dbConfig.js'; 
-import User from './userModel.js';
-import Position from './positionModel.js';
 
 const Candidate = sequelize.define('Candidate', {
   id: {
@@ -19,24 +17,17 @@ const Candidate = sequelize.define('Candidate', {
   },
   userId: {
     type: DataTypes.UUID,
-    references: {
-      model: User,
-      key: 'id',
-    },
+     allowNull:false
   },
   positionId: {
     type: DataTypes.UUID,
-    references: {
-      model: Position,
-      key: 'id',
-    },
+    allowNull:false
   },
 }, {
   timestamps: true,
   paranoid: true,
 });
 
-Candidate.belongsTo(User, { foreignKey: 'userId', as: 'student' });
-Candidate.belongsTo(Position, { foreignKey: 'positionId', as: 'position' });
+
 
 export default Candidate;

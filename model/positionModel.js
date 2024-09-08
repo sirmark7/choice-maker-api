@@ -1,7 +1,5 @@
 import { DataTypes } from 'sequelize';
 import {sequelize} from '../db/dbConfig.js'; 
-import Category from './categoryModel.js';
-
 const Position = sequelize.define('Position', {
   id: {
     type: DataTypes.UUID,
@@ -14,16 +12,12 @@ const Position = sequelize.define('Position', {
   },
   categoryId: {
     type: DataTypes.UUID,
-    references: {
-      model: Category,
-      key: 'id',
-    },
+    allowNull:false
   },
 }, {
   timestamps: true,
   paranoid: true,
 });
 
-Position.belongsTo(Category, { foreignKey: 'categoryId', as: 'category' });
 
 export default Position;
