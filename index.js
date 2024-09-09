@@ -27,11 +27,11 @@ app.use(authMiddleware);
 app.use(upload.single('image'));
 app.use('/api/votes', voteRoutes);
 app.use('/api/candidates', candidateRoutes);
+app.use('/api/elections', electionRoutes);
 app.use(adminMiddleware)
 app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/positions', positionRoutes);
-app.use('/api/elections', electionRoutes);
 
 app.use("*",(req,res)=>{
     res.status(404).json("Error 404,Page Not Found")

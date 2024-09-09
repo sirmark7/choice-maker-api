@@ -1,56 +1,75 @@
 
 import { Election,Position,Category,Vote,User,Candidate } from '../model/index.js';
 
+
 // Get votes for each candidate in an election, sorted by their positions
 
-export const getElectionResults = async (req, res) => {
-//  try {
-//     const electionId = req.params.electionId;
+export const getElectionwithCandidates = async (req, res) => {
+  console.log('heloo');
+  try {
+    // 1. Fetch all elections with positions
+    const elections = await Election.findAll({
+      include: {
+        model: Position,
+        as: 'positions',
+        include: {
+          model: Category,
+          as: 'category',
+          attributes: ['name'],  // Include category name
+        }
+      }
+    });
+console.log('done elections');
 
-//     // Find the election with its associated positions and candidates
-//     const election = await Election.findByPk(electionId, {
-//       include: {
-//         model: Position,
-//         as: 'positions',
-//         include: {
-//           model: Candidate,
-//           as: 'candidates',
-//           attributes: {
-//             include: [
-//               // Count votes for each candidate
-//               [Vote.sequelize.fn('COUNT', Vote.sequelize.col('candidateId')), 'voteCount']
-//             ]
-//           },
-//           include: [
-//             {
-//               model: User,
-//               as: 'student',
-//               attributes: ['name'], // Include the user's name
-//             },
-//             {
-//               model: Vote,
-//               as: 'votes',
-//               attributes: [] // No need to include vote details, just counting
-//             }
-//           ]
-//         }
-//       },
-//       group: ['votes.candidateId'], // Group by candidate ID to aggregate votes
-//       // order: [
-//       //   ['positions', 'name', 'ASC'],  // Order positions by name
-//       //   [{ model: Position, as: 'positions' }, { model: Candidate, as: 'candidates' }, 'DESC']  // Order candidates by vote count within positions
-//       // ]
-//     });
 
-//     if (!election) {
-//       return res.status(404).json({ message: 'Election not found' });
-//     }
+    // 2. Fetch all candidates with their positions
+    const candidates = await Candidate.findAll({
+      include: [
+        {
+          model: Position,
+          as: 'position',
+          attributes: ['id', 'name'],
+        },
+        {
+          model: User,
+          as: 'student',
+          attributes: ['name']  // Include candidate's name (student name)
+        }
+      ]
+    });
+    console.log('done candidates');
+// console.log(elections,candidates);
 
-//     res.status(200).json({ message: 'success', data: election });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'Error fetching election results' });
-//   }
+    // 3. Organize candidates by positionId for easy lookup
+    const candidatesByPosition =  candidates.reduce((acc, candidate) => {
+      if (!acc[candidate.positionId]) {
+        acc[candidate.positionId] = [];
+      }
+      acc[candidate.positionId].push(candidate);
+      return acc;
+    }, {});
+
+    // 4. Combine candidates into elections by matching positionId
+    const combinedElections = elections.map(election => {
+      const positionsWithCandidates = election.positions.map(position => {
+        return {
+          ...position.toJSON(),
+          candidates: candidatesByPosition[position.id] || []  // Attach candidates or empty array if none
+        };
+      });
+
+      return {
+        ...election.toJSON(),
+        positions: positionsWithCandidates  // Attach updated positions with candidates
+      };
+    });
+
+    // 5. Return the combined result
+    res.status(200).json({ message: 'success', data: combinedElections });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error fetching election and candidate data' });
+  }
 };
 
 

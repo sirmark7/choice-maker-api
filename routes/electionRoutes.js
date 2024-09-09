@@ -1,12 +1,14 @@
 // routes/user.routes.js
 import { Router } from 'express';
-import { createElection,updateElection,getElectionById,getElections,deleteElection, getElectionResults} from '../controllers/electionController.js';
+import { createElection,updateElection,getElectionById,getElections,deleteElection,getElectionwithCandidates} from '../controllers/electionController.js';
+import { adminMiddleware } from '../middlewares/authMiddleware.js';
 const router = Router();
 
-router.post('/', createElection);
 router.get('/', getElections);
+router.get('/candidates',getElectionwithCandidates)
 router.get('/:id', getElectionById);
-router.get('/result/:electionId',getElectionResults)
+router.use(adminMiddleware)
+router.post('/', createElection);
 router.put('/:id', updateElection);
 router.delete('/:id', deleteElection);
 
