@@ -24,7 +24,8 @@
         </tr>
       </tbody>
     </table>
-    <!-- <EditUser v-show="show" :toggleModal="toggleModal" :updateUser="handleEditUser"  :userInfo="selectedUser"/> -->
+    
+    <EditUser v-if="show" :toggleModal="toggleModal" :updateUser="handleEditUser"  :userInfo="selectedUser"/>
   </div>
 </template>
 

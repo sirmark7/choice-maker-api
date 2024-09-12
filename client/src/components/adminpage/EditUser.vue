@@ -28,28 +28,28 @@
 
       <div class="form-group">
         <label for="name">Name</label>
-        <input type="text" id="name" name="name" v-model="name" :value="userInfo.name" required  />
+        <input type="text" id="name" name="name" v-model="newUser.name"  required  />
       </div>
       <div class="form-group">
         <label for="personalId">Personal ID</label>
-        <input type="text" id="personalId" name="personalId" v-model="personalId" value="" minlength="6" required />
+        <input type="text" id="personalId" name="personalId" v-model="newUser.personalId"  minlength="6" required />
       </div>
       <div class="form-group">
         <label for="role">Role</label>
-        <select id="role" name="role" v-model="role" required>
+        <select id="role" name="role" v-model="newUser.role" required>
           <option value="student">Student</option>
           <option value="staff">Staff</option>
           <option value="admin">Admin</option>
         </select>
       </div>
-      <div class="form-group">
+      <!-- <div class="form-group">
         <label for="password">Old Password</label>
-        <input type="password" id="password" name="oldPassword" v-model="oldPassword" minlength="8" required />
+        <input type="password" id="password" name="oldPassword" v-model="newUser.oldPassword" minlength="8" />
       </div>
       <div class="form-group">
         <label for="confirm-password">New Password</label>
-        <input type="password" id="confirm-password" name="newPassword" v-model="newPassword" required />
-      </div>
+        <input type="password" id="confirm-password" name="newPassword" v-model="newUser.newPassword"  />
+      </div> -->
       <button type="submit">Update User</button>
     </form>
   </div>
@@ -57,26 +57,24 @@
 </template>
 
 <script setup>
-import { ref ,onMounted} from 'vue'
+import { ref } from 'vue'
 import {useUserStore} from '../../stores/user'
 import {useLoaderStore} from '../../stores/loader'
 import {CloseCircle} from '@vicons/ionicons5'
 import Swal from 'sweetalert2'
-const {addUser,getUsers}=useUserStore()
+const {updateUser}=useUserStore()
 const {setIsLoading}=useLoaderStore()
 const newUser=ref(userInfo)
-const newPassword=ref()
-const oldPassword=ref()
-const users=ref(getUsers)
  const profileImage = ref();
 const profileView = ref();
 const prefixImg=ref('/uploads/')
 const {userInfo,toggleModal} =defineProps(['userInfo','toggleModal'])
 
-onMounted(()=>{
-  users.value=getUsers
-  newUser.value= users.value.find((user)=>user.id===userInfo.id)
-})
+// onMounted(()=>{
+  
+//   newUser.value=userInfo&&userInfo
+//   console.log(newUser);
+// })
 const handleFileChange = (event) => {
       event.preventDefault()
     const file = event.target.files?.[0];
@@ -92,21 +90,21 @@ const handleFileChange = (event) => {
     }
   };
     const handleUpdateUser=async()=> {
-      if(!newUser.value.name||!newUser.value.personalId||!newUser.value.role||!newUser.value.password||!newUser.value.confirmPassword){
+      if(!newUser.value.name||!newUser.value.personalId||!newUser.value.role){
         return  Swal.fire({
             title: 'Incorrect credentials',
             text:   `check and re-enter details`,
             icon: 'warning',
         });
       }
-      if(newUser.value.password!==newUser.value.confirmPassword){
-        return  Swal.fire({
-            title: 'Incorrect credentials',
-            text:   `Passwords do not match`,
-            icon: 'warning',
-        })
-      }
-      if(newUser.value.personalId.length!==6 ||newUser.value.password.length<8) {
+      // if(){
+      //   return  Swal.fire({
+      //       title: 'password error',
+      //       text:   `Passwords do not match`,
+      //       icon: 'warning',
+      //   })
+      // }
+      if(newUser.value.personalId.length!==6) {
         return  Swal.fire({
             title: 'Incorrect credentials',
             text:   `PersonalID must be 6 characters long and Pasword must be 8 characters long`,
@@ -120,12 +118,15 @@ const handleFileChange = (event) => {
       formData.append('name',newUser.value.name)
       formData.append('personalId',newUser.value.personalId)
       formData.append('role',newUser.value.role)
-      formData.append('password',newUser.value.password)
+      // if(newUser.value.newPassword&&newUser.value.oldPassword){
+      // formData.append('password',newUser.value.newPassword)
+      // formData.append('password',newUser.value.oldPassword)
+      // }
       setIsLoading(true)
-        const result =await addUser(formData)
+        const result =await updateUser(userInfo.id,formData)
         if(result.success){
           setIsLoading(false)
-      console.log('User Created:', result);
+      console.log('User update:', result);
        Swal.fire({
             title: 'successful',
             text:   `User ${result?.data?.name}`,
@@ -135,16 +136,15 @@ const handleFileChange = (event) => {
         }else {
           setIsLoading(false)
         Swal.fire({
-            title: 'Failed to create User',
+            title: 'Failed to update User',
             text:   ``,
             icon: 'warning',
           
         });
-        console.error('creating failed', result);
+        console.error('update failed', result);
       
       }
-      newUser.value={}
-      profileView.value=null
+      toggleModal()
     }
 </script>
 

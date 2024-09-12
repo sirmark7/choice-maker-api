@@ -57,7 +57,7 @@ export const updateUser = async (req, res) => {
     logo : image.filename? image.filename: user.logo,
     }
  
-    console.log('hello',updates);
+    // console.log('hello',updates);
       const updateUser =await User.update(updates, { where: { id: req.params.id } });
     
     res.status(200).json({data:updateUser,message:'success'});
