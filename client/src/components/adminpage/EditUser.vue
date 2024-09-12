@@ -62,7 +62,7 @@ import {useUserStore} from '../../stores/user'
 import {useLoaderStore} from '../../stores/loader'
 import {CloseCircle} from '@vicons/ionicons5'
 import Swal from 'sweetalert2'
-const {updateUser}=useUserStore()
+const {updateUser,getAllUsers}=useUserStore()
 const {setIsLoading}=useLoaderStore()
 const newUser=ref(userInfo)
  const profileImage = ref();
@@ -127,12 +127,14 @@ const handleFileChange = (event) => {
         if(result.success){
           setIsLoading(false)
       console.log('User update:', result);
+      await getAllUsers()
        Swal.fire({
             title: 'successful',
-            text:   `User ${result?.data?.name}`,
+            text:   `User ${userInfo.name}`,
             icon: 'success',
           
-        });
+        })
+        
         }else {
           setIsLoading(false)
         Swal.fire({

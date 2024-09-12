@@ -79,7 +79,6 @@ export const useUserStore = defineStore('user', {
       try {
         const response = await service.put(`/users/${id}`,body);
         const { message ,data} = response.data;
-        this.setUsers(this.users.filter((user) => user.id !== data.id))
         await this.getAllUsers()
         return { success: true, message,data };
       } catch (error) {

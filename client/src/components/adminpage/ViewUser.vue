@@ -86,6 +86,8 @@ onMounted(async()=>{
     }
 
     const toggleModal=()=>{
+      window.location.reload()
+      users.value=getUsers
       console.log('hello');
       show.value=false;
       selectedUser.value={}
