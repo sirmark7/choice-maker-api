@@ -7,12 +7,8 @@ const storage = multer.diskStorage({
     const{originalname, mimetype} =file;
     cb(null, `${Date.now()}-${originalname}`);
   },
-  destination: (req, file, cb) => {
-    
-    cb(null, path.join(__dirname,'../uploads'));  // Save uploads in 'uploads/' directory
+  destination: path.resolve(process.cwd()+'/../client/public/uploads')  // Save uploads in 'uploads/' directory
   
-  },
-
 });
 
 const upload = multer({ storage });

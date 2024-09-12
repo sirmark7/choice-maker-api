@@ -5,11 +5,14 @@ import bcrypt from 'bcrypt';
 export const createUser = async (req, res) => {
   try {
     const { name, personalId, password, role, } = req.body;
-    const {logo}=req.files
+    const image=req.file
+    console.log(req.file);
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({ name, personalId, password: hashedPassword, role,logo });
     res.status(201).json({message:'success',data:newUser});
+    res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Error creating user' });
   }
@@ -39,18 +42,27 @@ export const getUserById = async (req, res) => {
 // Update a user
 export const updateUser = async (req, res) => {
   try {
-    const { name, email, role } = req.body;
-    const user = await User.findByPk(req.params.id);
-    if (!user) return res.status(404).json({ error: 'User not found' });
+    const { name, role,personalId } = req.body;
+       const image=req.file
 
-    user.name = name || user.name;
-    user.email = email || user.email;
-    user.role = role || user.role;
+    const userExist = await User.findByPk(req.params.id);
 
-    await user.save();
-    res.status(200).json(user);
+    if (!userExist) return res.status(404).json({ error: 'User not found' });
+    const user=userExist.dataValues
+  
+    const updates= {
+       name : name? name:  user.name,
+    role : role? role:  user.role,
+    personalId:personalId?personalId:user.personalId,
+    logo : image.filename? image.filename: user.logo,
+    }
+ 
+    console.log('hello',updates);
+      const updateUser =await User.update(updates, { where: { id: req.params.id } });
+    
+    res.status(200).json({data:updateUser,message:'success'});
   } catch (error) {
-    res.status(500).json({ error: 'Error updating user' });
+    res.status(500).json({ error: 'Error updating user',errors: error });
   }
 };
 

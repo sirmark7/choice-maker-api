@@ -19,19 +19,21 @@ import voteRoutes from './routes/votesRoutes.js'
 import candidateRoutes from './routes/candidateRoutes.js';
 import electionRoutes from './routes/electionRoutes.js'
 import authRoutes from './routes/authRoutes.js'
+import voteProgressRoutes from './routes/voteProgressRoutes.js'
 import { authMiddleware,adminMiddleware } from './middlewares/authMiddleware.js';
-import upload from './middlewares/uploadMiddleware.js';
+
+
 
 app.use('/api/auth',authRoutes)
 app.use(authMiddleware);
-app.use(upload.single('image'));
+app.use('/api/vote_progress',voteProgressRoutes)
+app.use('/api/elections', electionRoutes);
 app.use('/api/votes', voteRoutes);
 app.use('/api/candidates', candidateRoutes);
-app.use('/api/elections', electionRoutes);
 app.use(adminMiddleware)
-app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/positions', positionRoutes);
+app.use('/api/users', userRoutes);
 
 app.use("*",(req,res)=>{
     res.status(404).json("Error 404,Page Not Found")

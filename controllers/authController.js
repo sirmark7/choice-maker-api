@@ -8,7 +8,7 @@ export const registerUser =async(req,res)=>{
  
     const {error,value}= authValidator.validate(req.body)
    
-    //  const {logo}=req.file
+   const image=req.file
      if(error){
             throw new Error(error)
         }
@@ -23,7 +23,8 @@ export const registerUser =async(req,res)=>{
       name:name, 
       personalId:personalId,
       password: hashedPassword,
-      role:'student'
+      role:'student',
+      logo:image?image.filename:'default.png'
     });
  
     
@@ -39,7 +40,7 @@ export const registerAdmin = async (req, res) => {
     
     const {error,value}= authValidator.validate(req.body)
    
-    //  const {logo}=req.file
+     const image=req.file
      if(error){
             throw new Error(error)
         }
@@ -54,7 +55,8 @@ export const registerAdmin = async (req, res) => {
       name:name, 
       personalId:personalId,
       password: hashedPassword,
-      role:role?role:'admin'
+      role:role?role:'admin',
+      logo:image?image.filename:'default.png'
     });
  
     

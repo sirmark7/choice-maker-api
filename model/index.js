@@ -4,6 +4,7 @@ import Candidate from './candidateModel.js';
 import Election from './electionModel.js';
 import Category from './categoryModel.js';
 import Vote from './voteModel.js';
+import VoterProgress from './voteProgressModel.js';
 // User Associations
 User.hasMany(Candidate, { as: 'candidates', foreignKey: 'userId' });
 User.hasMany(Vote, { as: 'votes', foreignKey: 'userId' });
@@ -25,4 +26,4 @@ Election.belongsToMany(Position, { through: 'ElectionPosition', as: 'positions' 
 Vote.belongsTo(Candidate, { foreignKey: 'candidateId', as: 'candidate' });
 Vote.belongsTo(User, { foreignKey: 'userId', as: 'student' });
 
-export {User,Candidate,Position,Category,Election,Vote}
+export {User,Candidate,Position,Category,Election,Vote,VoterProgress}
